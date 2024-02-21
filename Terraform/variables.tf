@@ -37,3 +37,7 @@ variable "acl" {
   default = "private"
   type    = string
 }
+
+variable "private_key_path" {
+  type = string
+}

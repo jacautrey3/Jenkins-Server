@@ -1,6 +1,3 @@
-locals {
-  private_key_path = "~/projects/jenkins_key.pem"
-}
 #Create EC2 Instance
 resource "aws_instance" "jenkins-ec2" {
   ami                    = var.ami_id
@@ -22,13 +19,13 @@ resource "null_resource" "ansible" {
     connection {
       type        = "ssh"
       user        = "ec2-user"
-      private_key = file(local.private_key_path)
+      private_key = file(var.private_key_path)
       host        = aws_instance.jenkins-ec2.public_ip
     }
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.jenkins-ec2.public_ip}, --private-key ${local.private_key_path} ~/projects/Jenkins-Server/Ansible/jenkins.yaml"
+    command = "ansible-playbook -i ${aws_instance.jenkins-ec2.public_ip}, --private-key ${var.private_key_path} ~/projects/Jenkins-Server/Ansible/jenkins.yaml"
   }
 }
 
