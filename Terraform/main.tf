@@ -1,13 +1,34 @@
+locals {
+  private_key_path = "~/projects/jenkins_key.pem"
+}
 #Create EC2 Instance
 resource "aws_instance" "jenkins-ec2" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   key_name               = var.key_name
-  user_data              = file("../install_jenkins.sh")
   vpc_security_group_ids = [aws_security_group.jenkins-sg.id]
   tags = {
     Name    = "Jenkins"
     Project = "Jenkins"
+  }
+}
+
+resource "null_resource" "ansible" {
+  depends_on = [aws_instance.jenkins-ec2]
+  # Provisioning for Ansible
+  provisioner "remote-exec" {
+    inline = ["echo 'Wati until SSH is ready'"]
+
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = file(local.private_key_path)
+      host        = aws_instance.jenkins-ec2.public_ip
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -i ${aws_instance.jenkins-ec2.public_ip}, --private-key ${local.private_key_path} ~/projects/Jenkins-Server/Ansible/jenkins.yaml"
   }
 }
 
