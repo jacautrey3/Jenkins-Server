@@ -25,7 +25,7 @@ resource "null_resource" "ansible" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.jenkins-ec2.public_ip}, --private-key ${var.private_key_path} ~/projects/Jenkins-Server/Ansible/jenkins.yaml"
+    command = "ansible-playbook -i ${aws_instance.jenkins-ec2.public_ip}, --private-key ${var.private_key_path} ../Ansible/jenkins.yaml"
   }
 }
 

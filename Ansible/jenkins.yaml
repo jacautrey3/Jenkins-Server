@@ -2,9 +2,9 @@
 - name: Install Jenkins
   hosts: all
   remote_user: ec2-user
+  become: true
   vars:
     ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
-  become: true
 
   tasks:
     - name: Download Jenkins release
